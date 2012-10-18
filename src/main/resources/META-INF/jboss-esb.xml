@@ -1,0 +1,57 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<jbossesb xmlns="http://anonsvn.labs.jboss.com/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.1.xsd"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://anonsvn.labs.jboss.com/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.1.xsd http://anonsvn.jboss.org/repos/labs/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.1.xsd"
+ parameterReloadSecs="5">
+ <providers>
+        <http-provider name="HTTP">
+            <property name="host" value="localhost"/>
+            <property name="port" value="8080"/>
+            <http-bus busid="getPaymentRequestBus">
+            <property name="allowTrace" value="true"/>
+                <protected-methods>
+                    <method name="GET" />
+                    <method name="POST" />
+                </protected-methods>
+            </http-bus>
+        </http-provider>
+        <!-- 
+        <jms-provider name="JBossMQ" connection-factory="ConnectionFactory">
+        <jms-bus busid="jmsBus">
+        <jms-message-filter dest-name="queue/ESBQueue" dest-type="QUEUE"/>
+        </jms-bus>
+        </jms-provider>
+        -->
+        </providers>
+        
+        <services>
+        <service name="GetPaymentService" description="Takes the payment request passed from the RESTful web service to the http provider" category="GetPayment" invmScope="GLOBAL">
+        <listeners>
+        <http-gateway name="Http" busidref="getPaymentRequestBus" urlPattern="Orders/0">
+        <property name="allowedPorts" value="8080,8081"/>
+        </http-gateway>
+        <!-- Url is http://localhost:8080/PaymentESBService-0.0.1-SNAPSHOT/http/Orders
+        N.B Url is always: http://<host>:<port>/<ESB Name>/http/<urlPattern> -->
+        </listeners>
+        <actions>
+        <action name="StartJbpm5Process" class="org.jboss.soa.esb.services.jbpm5.actions.Bpm5Processor">
+        <property name="processHandlerClass" value="org.jbpm.task.service.hornetq.CommandBasedHornetQWSHumanTaskHandler"/>
+                      <property name="processHandlerHost" value="127.0.0.1"/>
+                      <property name="processHandlerPort" value="5446"/>
+	              <property name="process-definition-name" value="PaymentProcess.bpmn"/>
+                      <property name="process-id" value="com.redhat.bpmn.payment"/>
+                      <property name="process-action" value="startProcess"/>
+                      <property name="esbToBpmParams">
+                       <mapping esb="order" bpm="order"></mapping>
+                       <mapping esb="id" bpm="id"></mapping>
+                       <mapping esb="childName" bpm="childName"></mapping>
+                       <mapping esb="parentName" bpm="parentName"></mapping>
+                       <mapping esb="menu" bpm="menu"></mapping>
+                       <mapping esb="price" bpm="price"></mapping>
+                      </property>
+        </action>
+        </actions>
+        </service>
+        </services>
+       
+ 
+ </jbossesb>

@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.redhat</groupId>
+  <artifactId>PaymentESBService</artifactId>
+ <version>0.0.1-SNAPSHOT</version>
+  <name>Payment ESB</name>
+  <packaging>jboss-esb</packaging>
+  <description>Payment ESB project</description>
+  <properties>
+  <jbossesb.version>4.11</jbossesb.version>
+  </properties>
+   <repositories>
+        <repository>
+            <id>jboss</id>
+            <name>JBoss</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+  <build>
+  <plugins>
+  <plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <configuration>
+  <source>1.6</source>
+  <target>1.6</target>
+  </configuration>
+  </plugin>
+  <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jboss-packaging-maven-plugin</artifactId>
+        <version>2.2</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>jboss-esb</id>
+            <phase>package</phase>
+            <goals>
+              <goal>esb</goal>
+            </goals>
+            <configuration>
+            <!-- 
+              <primaryArtifact>false</primaryArtifact>
+              <packagingDirectory>${project.build.directory}/${project.artifactId}</packagingDirectory>
+        <deploymentDescriptorDest>${project.build.directory}/${project.artifactId}/META-INF</deploymentDescriptorDest>
+        -->
+        <deploymentDescriptorFile>src/main/resources/META-INF/jboss-esb.xml</deploymentDescriptorFile>
+      <excludeAll>true</excludeAll>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+            <descriptors>
+                <descriptor>src/main/assembly/assembly.xml</descriptor>
+            </descriptors>
+        </configuration>
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                    <goal>attached</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+    -->
+    </plugins>
+  </build>
+  
+  <dependencies>
+  <dependency>
+  <groupId>org.jboss.soa.bpel.dependencies.esb</groupId>
+  <artifactId>jbossesb-rosetta</artifactId>
+  <version>4.10-SNAPSHOT</version>
+  <scope>provided</scope>
+  </dependency>
+  </dependencies>
+</project>
